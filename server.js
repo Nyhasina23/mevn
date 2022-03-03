@@ -1,18 +1,24 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000
-const connectionDB = require('./db.config')
 const cors = require('cors')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const bucketListItemsRoutes = require('./routes/api/bucketListItem.js')
 const router = require('./routes/api/bucketListItem.js')
 const path = require('path')
+const mongoose = require('mongoose')
+const {PORT , mongoUri} = require('./db.config')
 app.use(function (req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         next();
     });
-connectionDB();
+
+    mongoose.connect(mongoUri , {
+            useNewUrlParser : true,
+            useUnifiedTopology : true , 
+    }).then( () =>  console.log('MongoDB Database Connected...'))
+    .catch((err) => console.log(err))
+
 var corsOptions = {
         origin : 'http://localhost:8080'
 }
@@ -30,4 +36,4 @@ if(process.env.NODE_ENV === 'production'){
         })
 }
 
-app.listen(PORT, () => { console.log('Server start on port ' + PORT); }) 
+app.listen(PORT, () =>  console.log(`App listening at http://localhost:${PORT}`))
